@@ -1,4 +1,4 @@
-# Use official PHP with Apache
+# Use official PHP 8.2 with Apache
 FROM php:8.2-apache
 
 # Install system dependencies for Laravel
@@ -9,7 +9,10 @@ RUN apt-get update && apt-get install -y \
 # Enable Apache mod_rewrite for Laravel routing
 RUN a2enmod rewrite
 
-# Copy project files to Apache web root
+# Set Apache DocumentRoot to Laravel's public folder
+RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
+
+# Copy project files
 COPY . /var/www/html
 
 # Set working directory
@@ -28,5 +31,5 @@ RUN chown -R www-data:www-data storage bootstrap/cache \
 # Expose port 80
 EXPOSE 80
 
-# Use Laravel public folder as web root
-CMD ["./vendor/bin/heroku-php-apache2", "public/"]
+# Start Apache (default command for php:apache)
+CMD ["apache2-foreground"]
