@@ -9,13 +9,22 @@ class MpesaTransaction extends Model  // Class name exact
 {
     use HasFactory;
 
-    protected $fillable = [  // Add your fields to allow mass assignment
-        'MerchantRequestID',
-        'CheckoutRequestID',
-        'ResultCode',
-        'ResultDesc',
-        'Amount',
-        'MpesaReceiptNumber',
-        'PhoneNumber',
-    ];
+    protected $fillable = [
+    'MerchantRequestID',
+    'CheckoutRequestID',
+    'ResultCode',
+    'ResultDesc',
+    'Amount',
+    'MpesaReceiptNumber',
+    'PhoneNumber',
+    'customer_name',
+    'amount_paid',
+    'customer_phone',
+    'paid_at',
+];
+
+// Optional: format date nicely in JSON/admin views
+protected $casts = [
+    'paid_at' => 'datetime',
+];
 }
