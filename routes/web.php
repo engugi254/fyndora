@@ -6,6 +6,11 @@ use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\DarajaController;
 
+Route::get('/run-migrations', function () {
+    Artisan::call('migrate', ['--force' => true]);
+    return 'Migrations executed!';
+});
+
 
 // 🏠 Shop routes
 Route::get('/', [ProductController::class, 'index'])->name('shop.index');
