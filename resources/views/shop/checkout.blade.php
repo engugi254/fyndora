@@ -87,42 +87,42 @@
 <!-- POLLING SCRIPT -->
 
     @if(session('checkout_request_id'))
-		<script>
-		const checkoutID = "{{ session('checkout_request_id') }}";
-		const waitingDiv = document.getElementById('waiting');
-		const formDiv = document.getElementById('checkout-form');
+<script>
+    const checkoutID = "{{ session('checkout_request_id') }}";
 
-		// Show spinner only
-		waitingDiv.style.display = 'block';
-		formDiv.style.display = 'none';
+    const waitingDiv = document.getElementById('waitingBox');
+    const formDiv = document.getElementById('checkoutForm');
 
-		// Polling for payment status
-		function checkPayment() {
-			fetch('/check-payment-status?CheckoutRequestID=' + checkoutID)
-				.then(res => res.json())
-				.then(data => {
-					if (data.status === 'done') {
-						clearInterval(pollInterval);
+    // Show waiting spinner
+    waitingDiv.style.display = 'block';
+    formDiv.style.display = 'none';
 
-						if (data.success) {
-							alert("Payment successful! Returning to shop...");
-							window.location.href = "/";     // ✅ Go back to homepage
-						} else {
-							alert("Payment failed. Please try again.");
-							window.location.href = "/checkout"; // ✅ Reload checkout form
-						}
-					}
-				})
-				.catch(err => console.warn('Polling error:', err));
-		}
+    function checkPayment() {
+        fetch('/check-payment-status?CheckoutRequestID=' + checkoutID)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'done') {
+                    clearInterval(pollInterval);
 
-		// Poll every 8 seconds
-		const pollInterval = setInterval(checkPayment, 8000);
+                    if (data.success) {
+                        alert("Payment successful! Redirecting to shop...");
+                        window.location.href = "/";   // SUCCESS → shop
+                    } else {
+                        alert("Payment failed. Please try again.");
+                        window.location.href = "/checkout"; // FAILED → form
+                    }
+                }
+            })
+            .catch(err => console.log("Polling error:", err));
+    }
 
-		// Stop after 5 minutes
-		setTimeout(() => clearInterval(pollInterval), 300000);
-		</script>
-		@endif
+    // Poll every 8 seconds
+    const pollInterval = setInterval(checkPayment, 8000);
+
+    // Stop after 5 minutes
+    setTimeout(() => clearInterval(pollInterval), 300000);
+</script>
+@endif
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
