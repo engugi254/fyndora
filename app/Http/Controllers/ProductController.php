@@ -9,15 +9,23 @@ class ProductController extends Controller
 {
     // Display all products
     public function index(Request $request)
-    {
-        $search = $request->input('search');
+{
+    $search = trim($request->input('search', ''));
 
-        $products = Product::when($search, function ($query, $search) {
-            $query->where('name', 'like', '%' . $search . '%');
-        })->get();
+    $products = Product::query();
 
-        return view('shop.index', compact('products', 'search'));
+    if ($search !== '') {
+        $terms = preg_split('/\s+/', $search);
+
+        foreach ($terms as $term) {
+            $products->where('name', 'ILIKE', '%' . $term . '%');
+        }
     }
+
+    $products = $products->get();
+
+    return view('shop.index', compact('products', 'search'));
+}
 
     // Display the cart
     public function cart()
