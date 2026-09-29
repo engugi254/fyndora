@@ -18,6 +18,9 @@ return Application::configure(basePath: dirname(__DIR__))
                 // Add wildcards if useful, e.g., 'mpesa/*'
             ]
         );
+        
+        $middleware->trustProxies(at: '*');
+
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
