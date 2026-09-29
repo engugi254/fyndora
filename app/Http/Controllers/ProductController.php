@@ -8,10 +8,15 @@ use App\Models\Product;
 class ProductController extends Controller
 {
     // Display all products
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::all();
-        return view('shop.index', compact('products'));
+        $search = $request->input('search');
+
+        $products = Product::when($search, function ($query, $search) {
+            $query->where('name', 'like', '%' . $search . '%');
+        })->get();
+
+        return view('shop.index', compact('products', 'search'));
     }
 
     // Display the cart
